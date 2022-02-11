@@ -815,7 +815,7 @@ class Emulator extends REST_Controller {
 										SELECT ems.EmulatorId, ems.EmulatorName FROM emulators ems join campaign cm on
 										ems.EmulatorCampaignId = cm.CampaignId
 										where
-										ems.EmulatorName LIKE '%$query%' 
+										ems.EmulatorName LIKE '%$query%'
 										And EmulatorCampaignId
 										in (
 										SELECT CampaignId from usercampaign where userId = '$UserId' 
@@ -823,10 +823,11 @@ class Emulator extends REST_Controller {
 										And EmulatorLOBId
 										REGEXP (
 											SELECT group_concat(Case WHEN lobname = 'All' THEN '.*' else ul.lobId end SEPARATOR '|') from userlob ul join lob l on ul.lobId = l.lobId where userId = '$UserId' and l.CampaignId = cm.CampaignId
-										)
+										) UNION SELECT EmulatorId, EmulatorName FROM emulators where EmulatorName LIKE '%$query%' and Emulatorprovision='1'
 										LIMIT $limit  OFFSET  $offset						
 			
 			")->result_array();
+			
 			$this->response($result, REST_Controller::HTTP_OK);
 	}		
 	
